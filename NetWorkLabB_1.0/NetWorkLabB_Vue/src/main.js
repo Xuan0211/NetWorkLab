@@ -6,8 +6,23 @@ import router from './router'
 import ElementUI from 'element-ui'  
 import 'element-ui/lib/theme-chalk/index.css'
 import '../src/assets/global.css'
+import store from './store/index'
+import VueSocketIO from 'vue-socket.io'
 
-Vue.use(ElementUI);
+Vue.use(ElementUI).use(
+  new VueSocketIO({
+    debug: false, // debug调试，生产建议关闭
+    connection: "http://localhost:3000",
+    vuex: {
+      store,
+      actionPrefix: 'SOCKET_',
+      mutationPrefix: 'SOCKET_'
+    },
+    options: {     //Optional options, 
+      autoConnect:false, //关闭自动连接，在用户登录后在连接。
+    }
+  })
+);
 
 Vue.config.productionTip = false
 
