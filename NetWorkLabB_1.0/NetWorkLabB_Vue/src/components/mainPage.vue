@@ -4,40 +4,12 @@
 			<div class="flex-col justify-start items-start shrink-0 text-wrapper"><span class="text_2">HELLO!</span>
 			</div>
 			<div class="flex-col group_2">
-				<div class="flex-row items-center group_3 space-x-16">
-					<img class="image_2"
-						src="https://codefun-proj-user-res-1256085488.cos.ap-guangzhou.myqcloud.com/62f8bcea5a7e3f03100a0ed5/62f8bd5e689f2800114ed71c/16827623392213350819.png" />
-					<span class="font_1">用户123</span>
-				</div>
-				<div class="flex-row items-center group_3 space-x-16">
-					<img class="image_2"
-						src="https://codefun-proj-user-res-1256085488.cos.ap-guangzhou.myqcloud.com/62f8bcea5a7e3f03100a0ed5/62f8bd5e689f2800114ed71c/16827623392213350819.png" />
-					<span class="font_1">用户123</span>
-				</div>
-				<div class="flex-row items-center group_3 space-x-16">
-					<img class="image_2"
-						src="https://codefun-proj-user-res-1256085488.cos.ap-guangzhou.myqcloud.com/62f8bcea5a7e3f03100a0ed5/62f8bd5e689f2800114ed71c/16827623392213350819.png" />
-					<span class="font_1">用户123</span>
-				</div>
-				<div class="flex-row items-center group_3 space-x-16">
-					<img class="image_2"
-						src="https://codefun-proj-user-res-1256085488.cos.ap-guangzhou.myqcloud.com/62f8bcea5a7e3f03100a0ed5/62f8bd5e689f2800114ed71c/16827623392213350819.png" />
-					<span class="font_1">用户123</span>
-				</div>
-				<div class="flex-row items-center group_3 space-x-16">
-					<img class="image_2"
-						src="https://codefun-proj-user-res-1256085488.cos.ap-guangzhou.myqcloud.com/62f8bcea5a7e3f03100a0ed5/62f8bd5e689f2800114ed71c/16827623392213350819.png" />
-					<span class="font_1">用户123</span>
-				</div>
-				<div class="flex-row items-center group_3 space-x-16">
-					<img class="image_2"
-						src="https://codefun-proj-user-res-1256085488.cos.ap-guangzhou.myqcloud.com/62f8bcea5a7e3f03100a0ed5/62f8bd5e689f2800114ed71c/16827623392213350819.png" />
-					<span class="font_1">用户123</span>
-				</div>
-				<div class="flex-row items-center group_3 space-x-16">
-					<img class="image_2"
-						src="https://codefun-proj-user-res-1256085488.cos.ap-guangzhou.myqcloud.com/62f8bcea5a7e3f03100a0ed5/62f8bd5e689f2800114ed71c/16827623392213350819.png" />
-					<span class="font_1">用户123</span>
+				<div v-for="items in userList" :key="items.name" @click="set_talk_with(items)">
+					<div class="flex-row items-center group_3 space-x-16" v-if="items.name != my_info.name">
+						<el-avatar shape="square" size="small" style="background-color: #186299;">{{
+							items.name }}</el-avatar>
+						<span class="font_1">{{ items.name }}</span>
+					</div>
 				</div>
 			</div>
 			<div class="flex-col items-center">
@@ -48,41 +20,97 @@
 		<div class="flex-col flex-auto section_2">
 			<div class="flex-row header">
 				<div class="flex-col justify-start items-start flex-auto text-wrapper_2">
-					<span class="font_1 text">用户123</span>
+					<span class="font_1 text">{{ talk_with_info.name }}</span>
 				</div>
 			</div>
 			<div class="talkblock">
-				<div class="flex-row">
-					<img class="image"
-						src="https://codefun-proj-user-res-1256085488.cos.ap-guangzhou.myqcloud.com/62f8bcea5a7e3f03100a0ed5/62f8bd5e689f2800114ed71c/16827623392189318290.png" />
-					<div class="flex-col justify-start items-center text-wrapper_3">
-						<span class="font_2 text_3">Lets Talk</span>
+				<p>{{ talk_with_info }}</p>
+				<div v-for="items in msgList" :key="items">
+					<div v-if="items.receiver === my_info.name && items.sender === talk_with_info.name || items.type === 'my' && items.receiver === talk_with_info.name || talk_with_info.type === 'group' && items.type === 'group'">
+						<p>{{ items }}</p>
+						<div class="flex-row justify-end" v-if="items.type === 'my'">
+							<div class="flex-col justify-start items-center text-wrapper_4">
+								<span class="font_2 text_4">{{ items.msg }}</span>
+							</div>
+							<el-avatar shape="square" size="small"
+								style="background-color: #186299;">{{ my_info.name }}</el-avatar>
+						</div>
+						<div class="flex-row" v-else>
+							<el-avatar shape="square" size="small" style="background-color: #186299;">{{
+								items.sender }}</el-avatar>
+							<div class="flex-col justify-start items-center text-wrapper_3">
+								<span class="font_2 text_3">{{ items.msg }}</span>
+							</div>
+						</div>
 					</div>
-				</div>
-				<div class="flex-row justify-end">
-					<div class="flex-col justify-start items-center text-wrapper_4">
-						<span class="font_2 text_4">Lets Talk</span>
-					</div>
-					<img class="image"
-						src="https://codefun-proj-user-res-1256085488.cos.ap-guangzhou.myqcloud.com/62f8bcea5a7e3f03100a0ed5/62f8bd5e689f2800114ed71c/16827623392201200427.png" />
 				</div>
 			</div>
 			<div class="flex-col justify-start items-end tab-bar">
-				<el-input type="textarea" v-model="input" rows="4" maxlength="100"></el-input>
-				<div class="flex-col justify-start items-center text-wrapper_5"><span class="text_6">发送</span></div>
+				<el-input type="textarea" v-model="input" rows="4" maxlength="30"></el-input>
+				<div class="flex-col justify-start items-center text-wrapper_5" @click="send"><span class="text_6">发送</span>
+				</div>
 			</div>
 		</div>
 	</div>
 </template>
 
 <script>
+import store from '../store/index'
 export default {
 	name: 'mainPage',
 	data() {
 		return {
-			input:'',
+			input: '',
 		}
-	}
+	},
+	computed: {
+		userList() {
+			return store.state.userList;
+		},
+		talk_with_info() {
+			return store.state.userInfo;
+		},
+		my_info() {
+			return store.state.myInfo;
+		},
+		msgList() {
+			return store.state.chatMessageList;
+		},
+	},
+	methods: {
+		send() {
+			let time = new Date();
+			//封装一个信息包
+			let data = {
+					type: "my",//该消息来自自己
+					sender: this.my_info.name,
+					receiver: this.talk_with_info.name,
+					time: time.toLocaleString(),
+					msg: this.input,
+				};
+			if (this.talk_with_info.type == 'user') {				
+				//更新对方的消息记录
+				this.$socket.emit('privateChat', data);
+				//更新自己的消息记录
+				store.commit('SOCKET_updateChatMessageList', data);
+			}
+			else {
+				if (this.talk_with_info.type === 'group') {
+					this.$socket.emit('groupChat',data);
+					/* 自己的信息直接push到数组中 */
+					store.commit('SOCKET_updateChatMessageList',data);
+				}
+				else//rooms
+				{
+
+				}
+			}			
+			this.input = '';
+		},
+		set_talk_with(talk_with_info) {
+			store.commit('setUserInfo', talk_with_info);
+		},
+	},
 }
 </script>
 <style scoped>
@@ -203,15 +231,16 @@ export default {
 	padding: 0.5rem 0;
 	background-color: #1862991a;
 	border-radius: 0.63rem;
-	width: 5.06rem;
 	height: 1.63rem;
 }
 
 .font_2 {
+	padding: 0 0.5rem;
 	font-size: 0.69rem;
 	font-family: Noto Sans SC;
 	line-height: 0.5rem;
 	color: #000000;
+	white-space:nowrap;
 }
 
 .text_3 {
@@ -223,7 +252,6 @@ export default {
 	padding: 0.5rem 0;
 	background-color: #f7e27933;
 	border-radius: 0.63rem;
-	width: 5.06rem;
 	height: 1.63rem;
 }
 
@@ -239,17 +267,18 @@ export default {
 	bottom: 0;
 	height: 8rem;
 }
+
 .tab-bar>>>.el-textarea__inner {
-    border: 0;
-    resize: none;/* 这个是去掉 textarea 下面拉伸的那个标志，如下图 */
-  }
+	border: 0;
+	resize: none;
+	/* 这个是去掉 textarea 下面拉伸的那个标志，如下图 */
+}
 
 .text-wrapper_5 {
 	margin-right: 0.69rem;
 	padding: 0.38rem 0;
 	background-color: #186299;
 	border-radius: 0.25rem;
-	width: 3.38rem;
 }
 
 .text_6 {
@@ -266,6 +295,7 @@ export default {
 	background-size: 100% 100%;
 	background-repeat: no-repeat;
 	padding: 1rem 1.5rem;
+	overflow-x: scroll;
 }
 </style>
 

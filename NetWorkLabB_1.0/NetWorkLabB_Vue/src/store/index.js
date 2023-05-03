@@ -10,15 +10,9 @@ export default new Vuex.Store({
         /* 记录登录状态 */
         isLogin:false,
         /* 我的信息 */
-        myInfo:{
-            img:'http://img.52z.com/upload/news/image/20180111/20180111085521_86389.jpg',
-            name:'',
-        },
+        myInfo:{name:'',type:''},
         /* 别人的信息（特指聊天对象） */
-        userInfo:{
-            img:'',
-            name:'',
-        },
+        userInfo:{name:'',type:''},
         /* 用户列表 */
         userList:[],
         /* 聊天记录 */

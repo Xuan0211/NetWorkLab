@@ -20,7 +20,7 @@ Vue.use(ElementUI).use(
     },
     options: {     //Optional options, 
       autoConnect:false, //关闭自动连接，在用户登录后在连接。
-    }
+    } 
   })
 );
 
