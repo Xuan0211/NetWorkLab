@@ -17,6 +17,7 @@ export default new Vuex.Store({
         userList:[],
         /* 聊天记录 */
         chatMessageList:[],
+        roomList:[],
     },
     mutations: {
         /* 聊天记录的修改,这里我们使用vuex监听 */
@@ -38,6 +39,9 @@ export default new Vuex.Store({
             state.myInfo=data;
             state.isLogin=true;
         },
+        SOCKET_addRoom(state,data){
+            state.roomList = data;
+        }
     },
     actions: {},
     modules: {}

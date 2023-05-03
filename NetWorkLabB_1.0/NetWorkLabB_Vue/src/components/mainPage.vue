@@ -1,7 +1,8 @@
 <template>
 	<div class="flex-col page">
 		<div class="flex-col shrink-0 section space-y-72">
-			<div class="flex-col justify-start items-start shrink-0 text-wrapper"><span class="text_2">HELLO!</span>
+			<div class="flex-col justify-start items-start shrink-0 text-wrapper">
+				<span class="text_2">HELLO!</span>
 			</div>
 			<div class="flex-col group_2">
 				<div v-for="items in userList" :key="items.name" @click="set_talk_with(items)">
@@ -13,6 +14,7 @@
 				</div>
 			</div>
 			<div class="flex-col items-center">
+				<el-button size="small" @click="newRoom">+创建群组</el-button>
 				<span class="text_5">计算机网络课程设计</span>
 				<span class="text_7">Designed Dy Xuan</span>
 			</div>
@@ -24,10 +26,11 @@
 				</div>
 			</div>
 			<div class="talkblock">
-				<p>{{ talk_with_info }}</p>
+				<p v-if="false">{{ talk_with_info }}</p>
+				<p v-if="false">{{ roomList }}</p>
 				<div v-for="items in msgList" :key="items">
-					<div v-if="items.receiver === my_info.name && items.sender === talk_with_info.name || items.type === 'my' && items.receiver === talk_with_info.name || talk_with_info.type === 'group' && items.type === 'group'">
-						<p>{{ items }}</p>
+					<div v-if="items.receiver === my_info.name && items.sender === talk_with_info.name || items.type === 'my' && items.receiver === talk_with_info.name || talk_with_info.type === 'group' && items.msgtype === 'group'">
+						<p v-if="false">{{ items }}</p>
 						<div class="flex-row justify-end" v-if="items.type === 'my'">
 							<div class="flex-col justify-start items-center text-wrapper_4">
 								<span class="font_2 text_4">{{ items.msg }}</span>
@@ -51,6 +54,17 @@
 				</div>
 			</div>
 		</div>
+		<el-dialog style="width:60rem;" :visible.sync="dialogTableVisible" title="创建聊天室" append-to-body>
+			<div class="dialog">
+				<p>请输入群组名称</p>
+				<el-input v-model="roomName" maxlength="6"></el-input>				
+				<p>请选择用户</p>
+				<el-checkbox-group v-model="selectUser" class="selecttable">
+					<el-checkbox-button v-for="items in userList.filter(data => (data.type === 'user' && data.name !== my_info.name))" :key="items" :label="items.name"></el-checkbox-button>
+				</el-checkbox-group>
+				<el-button @click="buildRoom">创建</el-button>
+			</div>      
+		</el-dialog>
 	</div>
 </template>
 
@@ -61,6 +75,9 @@ export default {
 	data() {
 		return {
 			input: '',
+			dialogTableVisible:false,
+			selectUser:[],
+			roomName:'',
 		}
 	},
 	computed: {
@@ -76,6 +93,10 @@ export default {
 		msgList() {
 			return store.state.chatMessageList;
 		},
+		roomList()
+		{
+			return store.state.roomList;
+		}
 	},
 	methods: {
 		send() {
@@ -83,6 +104,7 @@ export default {
 			//封装一个信息包
 			let data = {
 					type: "my",//该消息来自自己
+					msgtype:'user',
 					sender: this.my_info.name,
 					receiver: this.talk_with_info.name,
 					time: time.toLocaleString(),
@@ -96,6 +118,7 @@ export default {
 			}
 			else {
 				if (this.talk_with_info.type === 'group') {
+					data.msgtype="group";
 					this.$socket.emit('groupChat',data);
 					/* 自己的信息直接push到数组中 */
 					store.commit('SOCKET_updateChatMessageList',data);
@@ -110,6 +133,37 @@ export default {
 		set_talk_with(talk_with_info) {
 			store.commit('setUserInfo', talk_with_info);
 		},
+		newRoom()
+		{
+			this.dialogTableVisible = true;
+		},
+		buildRoom()
+		{
+			if(this.roomName === ''|| this.selectUser === [])
+			{
+				this.$message.error("请完善信息");
+				return;
+			}
+			this.$socket.emit("login",{name: this.roomName,type:"room"},(res) =>
+			{
+				if(res)
+				{
+					let data={
+						name: this.roomName,
+						member: this.selectUser	
+					};
+					this.$socket.emit("addRoom",data);
+					this.$message.success("成功创建");
+					this.selectUser = [];
+					this.dialogTableVisible = false;
+				}
+				else
+				{
+					this.$message.error("群组名重复，请重新输入");
+				}
+			})
+
+		}
 	},
 }
 </script>
@@ -179,7 +233,7 @@ export default {
 
 .group_2 {
 	border-top: solid 0.063rem #e4e7ed;
-	height: 32rem;
+	height: 29rem;
 }
 
 .group_3 {
@@ -206,6 +260,7 @@ export default {
 	font-family: Noto Sans SC;
 	line-height: 0.5rem;
 	letter-spacing: 0.31rem;
+	padding-top: 1rem;
 }
 
 .text_7 {
@@ -296,6 +351,20 @@ export default {
 	background-repeat: no-repeat;
 	padding: 1rem 1.5rem;
 	overflow-x: scroll;
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+}
+.selecttable
+{
+	display: flex;
+	flex-direction: row;
+	gap: 0.5rem;
+}
+.dialog
+{
+	display: flex;
+	flex-direction: column;
 }
 </style>
 

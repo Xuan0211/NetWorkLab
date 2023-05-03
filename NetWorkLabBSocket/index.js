@@ -11,9 +11,10 @@ var io = require('socket.io')(http, {
 
 /* 接收在线人数，传给前端，保证在线人数是最新的 */
 var userList=[{
-    name:'默认群聊',
+    name:'广播',
     type:"group"
 }];  
+var roomList=[];
 
 io.on('connection', function (socket) {
     
@@ -55,6 +56,11 @@ io.on('connection', function (socket) {
                 io.to(iss.id).emit('updateChatMessageList',data);
             }
         });
+    });
+
+    socket.on('addRoom',data=>{
+         roomList.push(data);
+         io.emit('addRoom',roomList);
     });
 
     /* 用户掉线 */
