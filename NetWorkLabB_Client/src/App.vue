@@ -1,7 +1,7 @@
 <template>
   <div id="app">
-    <mainPage></mainPage>
-    <el-dialog style="width:60rem;" :visible.sync="dialogTableVisible" title="登录" append-to-body>
+    <mainPage class="mainpage"></mainPage>
+    <el-dialog class="dialogwrap" style="width:60rem;" :visible.sync="dialogTableVisible" title="登录" append-to-body>
       <div class="dialog">
         <el-input style="width:21.5rem" placeholder="请输入用户名" v-model="userName"></el-input>
         <el-button style="width: 5rem;" @click="login">登录</el-button>
@@ -80,11 +80,31 @@ export default {
   height: 100%;
   margin:0;
   padding:0;
+  background-image: url(https://codefun-proj-user-res-1256085488.cos.ap-guangzhou.myqcloud.com/62f8bcea5a7e3f03100a0ed5/62f8bd5e689f2800114ed71c/16832199295566722193.png);
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
 } 
 .dialog
 {
   display: flex;
   flex-direction: row;
   gap:0.5rem;
+}
+.mainpage
+{
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  margin-left: -25rem;
+  margin-top: -17.5rem;
+  background-color: white;
+  box-shadow: 0px 0px 50px rgba(0, 0, 0, 0.25);
+  border-radius: 5px;
+}
+.dialogwrap
+{
+  position: fixed;
+  left: 25%;
+  top: 25%;
 }
 </style>

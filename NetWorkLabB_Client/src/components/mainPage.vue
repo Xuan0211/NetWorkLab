@@ -18,6 +18,7 @@
 						<el-avatar shape="square" size="small" style="background-color: #186299;">{{
 							items.name }}</el-avatar>
 						<span class="font_1">{{ items.name }}</span>
+						<el-tag v-if="items.type === 'room'" size="small">群聊</el-tag>
 					</div>
 				</div>
 			</div>
@@ -236,7 +237,7 @@ export default {
 }
 
 
-	.section {
+.section {
 	margin-bottom: -4.38rem;
 	background-color: #ffffff;
 	overflow: hidden;
@@ -247,7 +248,7 @@ export default {
 
 .group_2 {
 	border-top: solid 0.063rem #e4e7ed;
-	height: 29rem;
+	height: 28rem;
 }
 
 .group_3 {
@@ -368,6 +369,9 @@ export default {
 	display: flex;
 	flex-direction: column;
 	gap: 1rem;
+}
+::-webkit-scrollbar {
+  display: none;
 }
 .selecttable
 {
