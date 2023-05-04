@@ -12,7 +12,7 @@ export default new Vuex.Store({
         /* 我的信息 */
         myInfo:{name:'',type:''},
         /* 别人的信息（特指聊天对象） */
-        userInfo:{name:'',type:''},
+        userInfo:{name:'广播',type:'group'},
         /* 用户列表 */
         userList:[],
         /* 聊天记录 */

@@ -2,11 +2,19 @@
 	<div class="flex-col page">
 		<div class="flex-col shrink-0 section space-y-72">
 			<div class="flex-col justify-start items-start shrink-0 text-wrapper">
-				<span class="text_2">HELLO!</span>
+				<span class="text_2">HELLO! {{ my_info.name }}</span>
 			</div>
 			<div class="flex-col group_2">
-				<div v-for="items in userList" :key="items.name" @click="set_talk_with(items)">
-					<div class="flex-row items-center group_3 space-x-16" v-if="items.name != my_info.name">
+				
+				<div v-for="items in userList.filter(data => (
+				data.type === 'group' 
+				|| data.type === 'user'
+				|| data.type === 'room' 
+				&& roomList[roomList.findIndex((i) => i.name === data.name)].member.findIndex((i) => i === my_info.name) !== -1 ))" 
+				:key="items.name" 
+				@click="set_talk_with(items)">
+
+					<div class="flex-row items-center group_3 space-x-16" v-if="items.name != my_info.name" :style="{'background-color': items.name === talk_with_info.name ? 'rgba(24, 98, 153, 0.12)':'white'}">
 						<el-avatar shape="square" size="small" style="background-color: #186299;">{{
 							items.name }}</el-avatar>
 						<span class="font_1">{{ items.name }}</span>
@@ -29,7 +37,7 @@
 				<p v-if="false">{{ talk_with_info }}</p>
 				<p v-if="false">{{ roomList }}</p>
 				<div v-for="items in msgList" :key="items">
-					<div v-if="items.receiver === my_info.name && items.sender === talk_with_info.name || items.type === 'my' && items.receiver === talk_with_info.name || talk_with_info.type === 'group' && items.msgtype === 'group'">
+					<div v-if="items.receiver === my_info.name && items.sender === talk_with_info.name || items.type === 'my' && items.receiver === talk_with_info.name || talk_with_info.type === 'group' && items.msgtype === 'group' || talk_with_info.type === 'room' && items.msgtype === 'room' && talk_with_info.name === items.roomName">
 						<p v-if="false">{{ items }}</p>
 						<div class="flex-row justify-end" v-if="items.type === 'my'">
 							<div class="flex-col justify-start items-center text-wrapper_4">
@@ -105,6 +113,7 @@ export default {
 			let data = {
 					type: "my",//该消息来自自己
 					msgtype:'user',
+					roomName:'not a room',
 					sender: this.my_info.name,
 					receiver: this.talk_with_info.name,
 					time: time.toLocaleString(),
@@ -125,7 +134,10 @@ export default {
 				}
 				else//rooms
 				{
-
+					data.msgtype = 'room';
+					data.roomName = this.talk_with_info.name;
+					this.$socket.emit('roomChat',data);
+					store.commit('SOCKET_updateChatMessageList',data);
 				}
 			}			
 			this.input = '';
@@ -139,15 +151,16 @@ export default {
 		},
 		buildRoom()
 		{
-			if(this.roomName === ''|| this.selectUser === [])
+			if(this.roomName === ''|| this.selectUser.length === 0)
 			{
 				this.$message.error("请完善信息");
 				return;
 			}
-			this.$socket.emit("login",{name: this.roomName,type:"room"},(res) =>
+			this.$socket.emit("login",{name: this.roomName,type:"room",owner: this.my_info.name},(res) =>
 			{
 				if(res)
 				{
+					this.selectUser.push(this.my_info.name);
 					let data={
 						name: this.roomName,
 						member: this.selectUser	
@@ -155,6 +168,7 @@ export default {
 					this.$socket.emit("addRoom",data);
 					this.$message.success("成功创建");
 					this.selectUser = [];
+					this.roomName = '';
 					this.dialogTableVisible = false;
 				}
 				else
@@ -222,7 +236,7 @@ export default {
 }
 
 
-.section {
+	.section {
 	margin-bottom: -4.38rem;
 	background-color: #ffffff;
 	overflow: hidden;
@@ -331,7 +345,7 @@ export default {
 
 .text-wrapper_5 {
 	margin-right: 0.69rem;
-	padding: 0.38rem 0;
+	padding: 0.38rem 0.6rem;
 	background-color: #186299;
 	border-radius: 0.25rem;
 }
